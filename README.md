@@ -4,7 +4,7 @@ Turn your GitHub contribution graph into a Flappy Bird animation.
 
 Each week of contributions becomes a pipe. Busier weeks mean tighter gaps. The bird auto-flies through your entire year of coding.
 
-![Example](example.gif)
+![Example](example.gif?v=2)
 
 ## Usage
 
