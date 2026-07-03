@@ -48,8 +48,8 @@ Then display it in your README:
 |---|---|---|---|
 | `github-token` | yes | | Token for fetching contributions (usually `secrets.GITHUB_TOKEN`) |
 | `username` | no | repo owner | Username to generate the game for |
-| `output-path` | no | `gh-flappy-graph.gif` | Where to save the GIF |
-| `fps` | no | `30` | Animation frame rate |
+| `output-path` | no | `gh-flappy-graph.gif` | Where to save the animation (`.gif` or `.webp`) |
+| `fps` | no | `30` | Animation frame rate (1-60) |
 | `bird` | no | `classic` | Bird theme: `classic`, `red`, `blue`, `ghost` |
 | `theme` | no | `dark` | Canvas theme: `dark`, `light` |
 | `weeks` | no | full year | Only render the last N weeks |
@@ -60,7 +60,7 @@ The action amends the previous update commit (instead of stacking a multi-MB com
 ### CLI
 
 ```bash
-pip install gh-flappy-graph
+pip install git+https://github.com/janmaaarc/gh-flappy-graph.git
 
 export GH_TOKEN=your_token   # needs read:user scope
 gh-flappy-graph <username>
@@ -82,8 +82,8 @@ gh-flappy-graph torvalds --weeks 12         # shorter loop, ~4x smaller file
 ## How it works
 
 1. Fetches your contribution calendar via the GitHub GraphQL API.
-2. Each week becomes a pipe. Gap height scales inversely with that week's total contributions, colored with GitHub's contribution-green shades.
-3. The gap in each column is carved through that week's quietest consecutive days, so the bird literally flies through the days you didn't commit. Busy weeks scroll faster.
+2. Each week becomes a column of its real 7 day cells, colored with GitHub's contribution shades.
+3. A gap is carved through the week's quietest consecutive days, so the bird literally flies through the days you didn't commit. Busy weeks get tighter gaps and scroll faster.
 4. A bird eases through every gap on autopilot, a closing stats card shows totals and best streak, and the whole run is saved as a looping GIF.
 
 Pipe placement is deterministic per profile, so the animation only changes when your contributions do.
