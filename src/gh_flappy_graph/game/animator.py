@@ -14,6 +14,7 @@ class Frame:
     bird_velocity: float
     pipes: list[Pipe]
     index: int
+    crashed: bool = False
 
 
 def generate_frames(pipes: list[Pipe]) -> list[Frame]:
@@ -41,5 +42,18 @@ def generate_frames(pipes: list[Pipe]) -> list[Frame]:
         visible = [p for p in current if p.x < constants.CANVAS_WIDTH and p.x + constants.PIPE_WIDTH > 0]
         frames.append(Frame(bird_y=bird.y, bird_velocity=bird.velocity, pipes=visible, index=index))
         index += 1
+
+        # hardcore: a gapless wall reaching the bird ends the run with a tumble
+        wall = next((p for p in visible if p.gap_len == 0), None)
+        if wall and wall.x <= constants.BIRD_X + constants.BIRD_RADIUS:
+            vy = 0.0
+            ground = constants.CANVAS_HEIGHT - constants.GROUND_HEIGHT - constants.BIRD_RADIUS
+            y = bird.y
+            for _ in range(constants.CRASH_FRAMES):
+                vy += constants.CRASH_GRAVITY
+                y = min(y + vy, ground)
+                frames.append(Frame(bird_y=y, bird_velocity=vy, pipes=visible, index=index, crashed=True))
+                index += 1
+            break
 
     return frames

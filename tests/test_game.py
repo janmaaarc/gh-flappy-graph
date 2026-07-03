@@ -108,3 +108,23 @@ def test_longest_streak():
     from gh_flappy_graph.cli import longest_streak
     weeks = make_weeks([[0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0, 0]])
     assert longest_streak(weeks) == 6
+
+
+def test_hardcore_zero_week_is_gapless_and_ends_course():
+    pipes = build_pipes(make_weeks([[1] * 7, [0] * 7, [1] * 7]), hardcore=True)
+    assert len(pipes) == 2
+    assert pipes[-1].gap_len == 0
+
+
+def test_hardcore_crash_frames_end_on_ground():
+    frames = generate_frames(build_pipes(make_weeks([[1] * 7, [0] * 7]), hardcore=True))
+    assert frames[-1].crashed
+    ground = constants.CANVAS_HEIGHT - constants.GROUND_HEIGHT - constants.BIRD_RADIUS
+    assert frames[-1].bird_y == ground
+
+
+def test_all_canvas_themes_render():
+    frames = generate_frames(build_pipes(make_weeks([[4] * 7, [8] * 7])))
+    for name in constants.THEMES:
+        img = render_frame(frames[0], theme_name=name)
+        assert img.size == (constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)

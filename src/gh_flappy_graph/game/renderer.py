@@ -137,7 +137,7 @@ def render_frame(frame: Frame, score: int = 0, thresholds: tuple[int, int, int] 
     return img
 
 
-def render_stats_card(score: int, total: int, streak: int, bird_theme: str = "classic", theme_name: str = "dark") -> Image.Image:
+def render_stats_card(score: int, total: int, streak: int, bird_theme: str = "classic", theme_name: str = "dark", died_week: str = "") -> Image.Image:
     theme = constants.THEMES[theme_name]
     img = _background(theme_name).copy()
     draw = ImageDraw.Draw(img)
@@ -145,12 +145,15 @@ def render_stats_card(score: int, total: int, streak: int, bird_theme: str = "cl
     cx = constants.CANVAS_WIDTH / 2
     cy = constants.CANVAS_HEIGHT / 2 - 20
     _draw_bird(draw, cy - 34, 0, 0.0, constants.BIRD_THEMES[bird_theme], theme["cell_outline"])
-    _draw_bold_text(draw, (cx, cy - 40), "Y E A R   C O M P L E T E", theme["score"], "mm")
+    title = "G A M E   O V E R" if died_week else "Y E A R   C O M P L E T E"
+    _draw_bold_text(draw, (cx, cy - 40), title, theme["score"], "mm")
     lines = [
         f"{total:,} contributions",
-        f"{score} weeks flown",
+        f"survived {score} weeks" if died_week else f"{score} weeks flown",
         f"best streak: {streak} days",
     ]
+    if died_week:
+        lines.append(f"died the week of {died_week}")
     for i, line in enumerate(lines):
         draw.text((cx, cy + i * 22), line, fill=theme["score"], anchor="mm")
     return img

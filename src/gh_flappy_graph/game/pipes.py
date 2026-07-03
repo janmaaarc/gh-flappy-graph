@@ -19,12 +19,16 @@ class Pipe:
 
     @property
     def gap_center(self) -> float:
+        if self.gap_len == 0:
+            return constants.CANVAS_HEIGHT / 2
         top = constants.row_y(self.gap_start)
         bottom = constants.row_y(self.gap_start + self.gap_len - 1) + constants.CELL_SIZE
         return (top + bottom) / 2
 
     @property
     def gap_height(self) -> float:
+        if self.gap_len == 0:
+            return 0.0
         return self.gap_len * constants.CELL_SIZE + (self.gap_len - 1) * constants.CELL_GAP
 
 
@@ -68,7 +72,7 @@ def _pick_gap(counts: tuple[int, ...], gap_len: int, prev_start: int) -> int:
     return best_start
 
 
-def build_pipes(weeks: list[ContributionWeek]) -> list[Pipe]:
+def build_pipes(weeks: list[ContributionWeek], hardcore: bool = False) -> list[Pipe]:
     totals = [sum(day.count for day in week.days) for week in weeks]
     max_total = max(totals) if totals else 0
 
@@ -81,9 +85,14 @@ def build_pipes(weeks: list[ContributionWeek]) -> list[Pipe]:
             counts = counts + (0,) * (constants.DAYS_PER_WEEK - len(counts))
 
         intensity = (total / max_total) if max_total else 0.0
-        gap_len = constants.GAP_DAYS_BUSY if intensity > 0.5 else constants.GAP_DAYS_QUIET
-        gap_start = _pick_gap(counts, gap_len, prev_start)
-        prev_start = gap_start
+        if hardcore and total == 0:
+            # a week with zero contributions has no gap: the run ends here
+            gap_len = 0
+            gap_start = 0
+        else:
+            gap_len = constants.GAP_DAYS_BUSY if intensity > 0.5 else constants.GAP_DAYS_QUIET
+            gap_start = _pick_gap(counts, gap_len, prev_start)
+            prev_start = gap_start
 
         month_label = ""
         if week.days:
@@ -103,4 +112,6 @@ def build_pipes(weeks: list[ContributionWeek]) -> list[Pipe]:
                 month_label=month_label,
             )
         )
+        if hardcore and total == 0:
+            break
     return pipes

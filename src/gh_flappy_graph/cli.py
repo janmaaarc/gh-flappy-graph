@@ -31,8 +31,9 @@ def main(
     fps: int = typer.Option(30, "--fps", help="Frames per second"),
     max_frame: int = typer.Option(None, "--max-frame", help="Stop after this many frames"),
     bird: str = typer.Option("classic", "--bird", "-b", help="Bird theme: classic, red, blue, ghost"),
-    theme: str = typer.Option("dark", "--theme", "-t", help="Canvas theme: dark, light"),
+    theme: str = typer.Option("dark", "--theme", "-t", help="Canvas theme: dark, light, halloween, ocean, sunset, mono"),
     weeks_limit: int = typer.Option(None, "--weeks", "-w", help="Only the last N weeks"),
+    hardcore: bool = typer.Option(False, "--hardcore", help="A zero-contribution week ends the run"),
 ) -> None:
     if not 1 <= fps <= 60:
         typer.echo("--fps must be between 1 and 60.", err=True)
@@ -66,7 +67,7 @@ def main(
     if weeks_limit:
         weeks = weeks[-weeks_limit:]
 
-    pipes = build_pipes(weeks)
+    pipes = build_pipes(weeks, hardcore=hardcore)
     frames = generate_frames(pipes)
     if max_frame:
         frames = frames[:max_frame]
@@ -84,7 +85,12 @@ def main(
 
     # hold a closing stats card for ~2 seconds
     total = sum(day.count for week in weeks for day in week.days)
-    card = render_stats_card(len(pipes), total, longest_streak(weeks), bird, theme)
+    died_week = ""
+    survived = len(pipes)
+    if hardcore and pipes and pipes[-1].gap_len == 0:
+        died_week = weeks[len(pipes) - 1].days[0].date
+        survived = len(pipes) - 1
+    card = render_stats_card(survived, total, longest_streak(weeks), bird, theme, died_week)
     images.extend([card] * max(int(2000 / duration_ms), 1))
 
     if output.lower().endswith(".webp"):

@@ -32,6 +32,9 @@ SPEED_RAMP = 0.25  # busier weeks scroll up to 25% faster
 
 SPARKLE_INTENSITY = 0.75  # min week intensity that triggers a pass sparkle
 
+CRASH_GRAVITY = 0.9  # hardcore mode: downward accel per frame after hitting a gapless week
+CRASH_FRAMES = 24  # tumble frames rendered after the crash
+
 BIRD_EYE_WHITE = (255, 255, 255)
 BIRD_EYE_PUPIL = (20, 20, 30)
 
@@ -82,6 +85,78 @@ THEMES = {
             (0, 109, 50),
             (38, 166, 65),
             (57, 211, 83),
+        ],
+    },
+    "halloween": {
+        "bg_top": (20, 12, 28),
+        "bg_bottom": (38, 22, 48),
+        "ground": (30, 20, 40),
+        "ground_stripe": (55, 38, 70),
+        "star": (130, 110, 150),
+        "score": (235, 215, 190),
+        "month": (170, 140, 180),
+        "cell_outline": (12, 8, 18),
+        "sparkle": (255, 200, 80),
+        "day_shades": [
+            (40, 34, 50),
+            (80, 45, 10),
+            (150, 75, 10),
+            (220, 110, 20),
+            (255, 150, 40),
+        ],
+    },
+    "ocean": {
+        "bg_top": (8, 18, 32),
+        "bg_bottom": (14, 34, 58),
+        "ground": (16, 30, 48),
+        "ground_stripe": (32, 52, 76),
+        "star": (100, 130, 160),
+        "score": (200, 225, 240),
+        "month": (120, 150, 175),
+        "cell_outline": (6, 12, 22),
+        "sparkle": (150, 240, 255),
+        "day_shades": [
+            (30, 42, 60),
+            (10, 60, 90),
+            (0, 100, 130),
+            (0, 150, 170),
+            (60, 210, 220),
+        ],
+    },
+    "sunset": {
+        "bg_top": (25, 12, 30),
+        "bg_bottom": (60, 25, 45),
+        "ground": (40, 18, 36),
+        "ground_stripe": (70, 35, 58),
+        "star": (160, 120, 140),
+        "score": (245, 220, 210),
+        "month": (190, 140, 150),
+        "cell_outline": (16, 8, 20),
+        "sparkle": (255, 210, 150),
+        "day_shades": [
+            (45, 35, 55),
+            (120, 40, 80),
+            (190, 60, 90),
+            (240, 100, 90),
+            (255, 160, 90),
+        ],
+    },
+    "mono": {
+        "bg_top": (12, 12, 14),
+        "bg_bottom": (28, 28, 32),
+        "ground": (22, 22, 26),
+        "ground_stripe": (44, 44, 50),
+        "star": (90, 90, 100),
+        "score": (225, 227, 232),
+        "month": (140, 142, 150),
+        "cell_outline": (8, 8, 10),
+        "sparkle": (255, 255, 255),
+        "day_shades": [
+            (36, 38, 42),
+            (70, 72, 78),
+            (120, 124, 130),
+            (180, 184, 190),
+            (240, 242, 245),
         ],
     },
     "light": {

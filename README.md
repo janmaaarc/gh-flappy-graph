@@ -51,8 +51,9 @@ Then display it in your README:
 | `output-path` | no | `gh-flappy-graph.gif` | Where to save the animation (`.gif` or `.webp`) |
 | `fps` | no | `30` | Animation frame rate (1-60) |
 | `bird` | no | `classic` | Bird theme: `classic`, `red`, `blue`, `ghost` |
-| `theme` | no | `dark` | Canvas theme: `dark`, `light` |
+| `theme` | no | `dark` | Canvas theme: `dark`, `light`, `halloween`, `ocean`, `sunset`, `mono` |
 | `weeks` | no | full year | Only render the last N weeks |
+| `hardcore` | no | `false` | A zero-contribution week ends the run: bird crashes, GAME OVER card |
 | `commit-message` | no | `Update flappy graph GIF` | Commit message |
 
 The action amends the previous update commit (instead of stacking a multi-MB commit per day) whenever the last commit message matches `commit-message`.
@@ -70,6 +71,8 @@ gh-flappy-graph torvalds -o game.gif --fps 30 --max-frame 200
 gh-flappy-graph torvalds --bird red
 gh-flappy-graph torvalds --theme light      # for light-mode READMEs
 gh-flappy-graph torvalds --weeks 12         # shorter loop, ~4x smaller file
+gh-flappy-graph torvalds --theme halloween  # also: ocean, sunset, mono
+gh-flappy-graph torvalds --hardcore         # zero-commit week = crash + GAME OVER
 
 # auto-switching dark/light in your README:
 # generate both game-dark.gif and game-light.gif, then:
