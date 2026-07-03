@@ -1,0 +1,88 @@
+name: 'GitHub Flappy Graph'
+description: 'Turn your GitHub contribution graph into a Flappy Bird GIF'
+author: 'Jan Marc Coloma'
+branding:
+  icon: 'feather'
+  color: 'green'
+
+inputs:
+  github-token:
+    description: 'GitHub token for fetching contribution data (usually secrets.GITHUB_TOKEN)'
+    required: true
+  username:
+    description: 'Username to generate the game for (defaults to repository owner)'
+    required: false
+    default: ${{ github.repository_owner }}
+  output-path:
+    description: 'Path where the GIF should be saved'
+    required: false
+    default: 'gh-flappy-graph.gif'
+  fps:
+    description: 'Frames per second for the animation'
+    required: false
+    default: '30'
+  bird:
+    description: 'Bird theme (classic, red, blue, ghost)'
+    required: false
+    default: 'classic'
+  commit-message:
+    description: 'Commit message for the GIF update'
+    required: false
+    default: 'Update flappy graph GIF'
+
+outputs:
+  output-file:
+    description: 'Path of the generated GIF'
+    value: ${{ steps.generate.outputs.output-file }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+
+    - name: Install gh-flappy-graph
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        # ponytail: install from the action's own checkout; switch to PyPI once published
+        pip install "git+https://github.com/janmaaarc/gh-flappy-graph.git@${{ github.action_ref || 'main' }}"
+
+    - name: Generate game
+      id: generate
+      shell: bash
+      # inputs go through env, never ${{ }} in the script body: prevents shell injection
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_OUTPUT_PATH: ${{ inputs.output-path }}
+        INPUT_FPS: ${{ inputs.fps }}
+        INPUT_BIRD: ${{ inputs.bird }}
+      run: |
+        gh-flappy-graph "$INPUT_USERNAME" \
+          --output "$INPUT_OUTPUT_PATH" \
+          --fps "$INPUT_FPS" \
+          --bird "$INPUT_BIRD"
+        echo "output-file=$INPUT_OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+
+    - name: Commit and push
+      shell: bash
+      env:
+        INPUT_OUTPUT_PATH: ${{ inputs.output-path }}
+        INPUT_COMMIT_MESSAGE: ${{ inputs.commit-message }}
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add "$INPUT_OUTPUT_PATH"
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        # amend the previous update instead of stacking daily multi-MB commits
+        elif [ "$(git log -1 --pretty=%s)" = "$INPUT_COMMIT_MESSAGE" ]; then
+          git commit --amend --no-edit
+          git push --force-with-lease
+        else
+          git commit -m "$INPUT_COMMIT_MESSAGE"
+          git push
+        fi

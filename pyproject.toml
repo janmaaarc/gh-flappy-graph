@@ -1,0 +1,30 @@
+[project]
+name = "gh-flappy-graph"
+version = "0.1.0"
+description = "Turn your GitHub contribution graph into a Flappy Bird GIF"
+readme = "README.md"
+authors = [
+    { name = "Jan Marc Coloma" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "typer>=0.12.0",
+    "httpx>=0.27.0",
+    "pillow>=10.1.0",
+]
+
+[project.scripts]
+gh-flappy-graph = "gh_flappy_graph.cli:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

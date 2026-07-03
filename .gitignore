@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+*.egg-info/
+.env
+*.gif
+!example.gif
+.pytest_cache/
+.impeccable/
