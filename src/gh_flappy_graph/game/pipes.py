@@ -11,10 +11,10 @@ from gh_flappy_graph.github_client import ContributionWeek
 class Pipe:
     x: float
     week_index: int
+    intensity: float  # 0..1, week total relative to the busiest week
     day_counts: tuple[int, ...]  # always 7, Sunday first
     gap_start: int  # first day-row removed
     gap_len: int  # how many day-rows removed
-    week_total: int
     month_label: str  # "Jan" on the first week of a month, else ""
 
     @property
@@ -40,11 +40,10 @@ def quartile_thresholds(all_day_counts: list[int]) -> tuple[int, int, int]:
     return (pct(0.25), pct(0.5), pct(0.75))
 
 
-def day_shade(count: int, thresholds: tuple[int, int, int]) -> tuple[int, int, int]:
+def day_level(count: int, thresholds: tuple[int, int, int]) -> int:
     if count <= 0:
-        return constants.DAY_SHADES[0]
-    level = 1 + sum(1 for t in thresholds if count > t)
-    return constants.DAY_SHADES[level]
+        return 0
+    return 1 + sum(1 for t in thresholds if count > t)
 
 
 _MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -97,10 +96,10 @@ def build_pipes(weeks: list[ContributionWeek]) -> list[Pipe]:
             Pipe(
                 x=constants.CANVAS_WIDTH + constants.PIPE_START_OFFSET + index * constants.PIPE_SPACING,
                 week_index=index,
+                intensity=intensity,
                 day_counts=counts,
                 gap_start=gap_start,
                 gap_len=gap_len,
-                week_total=total,
                 month_label=month_label,
             )
         )

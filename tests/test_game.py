@@ -1,5 +1,5 @@
 from gh_flappy_graph.game.animator import generate_frames
-from gh_flappy_graph.game.pipes import build_pipes, day_shade, quartile_thresholds
+from gh_flappy_graph.game.pipes import build_pipes, day_level, quartile_thresholds
 from gh_flappy_graph.game.renderer import render_frame
 from gh_flappy_graph.github_client import ContributionDay, ContributionWeek
 from gh_flappy_graph import constants
@@ -35,9 +35,9 @@ def test_short_week_padded_to_seven_days():
 
 def test_shade_bounds():
     thresholds = quartile_thresholds([1, 2, 3, 4, 5, 6, 7, 8])
-    assert day_shade(0, thresholds) == constants.DAY_SHADES[0]
-    assert day_shade(8, thresholds) == constants.DAY_SHADES[-1]
-    assert day_shade(1, thresholds) == constants.DAY_SHADES[1]
+    assert day_level(0, thresholds) == 0
+    assert day_level(8, thresholds) == 4
+    assert day_level(1, thresholds) == 1
 
 
 def test_frames_scroll_everything_off_screen():
@@ -90,3 +90,21 @@ def test_all_bird_themes_render():
 def test_identical_consecutive_weeks_have_distinct_indices():
     pipes = build_pipes(make_weeks([[0] * 7, [0] * 7]))
     assert pipes[0].week_index != pipes[1].week_index
+
+
+def test_light_theme_renders():
+    frames = generate_frames(build_pipes(make_weeks([[4] * 7, [8] * 7])))
+    img = render_frame(frames[0], theme_name="light")
+    assert img.size == (constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+
+
+def test_stats_card_renders():
+    from gh_flappy_graph.game.renderer import render_stats_card
+    img = render_stats_card(score=52, total=6110, streak=41)
+    assert img.size == (constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+
+
+def test_longest_streak():
+    from gh_flappy_graph.cli import longest_streak
+    weeks = make_weeks([[0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0, 0]])
+    assert longest_streak(weeks) == 6

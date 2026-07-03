@@ -51,6 +51,8 @@ Then display it in your README:
 | `output-path` | no | `gh-flappy-graph.gif` | Where to save the GIF |
 | `fps` | no | `30` | Animation frame rate |
 | `bird` | no | `classic` | Bird theme: `classic`, `red`, `blue`, `ghost` |
+| `theme` | no | `dark` | Canvas theme: `dark`, `light` |
+| `weeks` | no | full year | Only render the last N weeks |
 | `commit-message` | no | `Update flappy graph GIF` | Commit message |
 
 The action amends the previous update commit (instead of stacking a multi-MB commit per day) whenever the last commit message matches `commit-message`.
@@ -66,13 +68,23 @@ gh-flappy-graph <username>
 # options
 gh-flappy-graph torvalds -o game.gif --fps 30 --max-frame 200
 gh-flappy-graph torvalds --bird red
+gh-flappy-graph torvalds --theme light      # for light-mode READMEs
+gh-flappy-graph torvalds --weeks 12         # shorter loop, ~4x smaller file
+
+# auto-switching dark/light in your README:
+# generate both game-dark.gif and game-light.gif, then:
+# <picture>
+#   <source media="(prefers-color-scheme: dark)" srcset="game-dark.gif">
+#   <img alt="Flappy Graph" src="game-light.gif">
+# </picture>
 ```
 
 ## How it works
 
 1. Fetches your contribution calendar via the GitHub GraphQL API.
 2. Each week becomes a pipe. Gap height scales inversely with that week's total contributions, colored with GitHub's contribution-green shades.
-3. A bird eases through every gap on autopilot and the whole run is saved as a looping GIF.
+3. The gap in each column is carved through that week's quietest consecutive days, so the bird literally flies through the days you didn't commit. Busy weeks scroll faster.
+4. A bird eases through every gap on autopilot, a closing stats card shows totals and best streak, and the whole run is saved as a looping GIF.
 
 Pipe placement is deterministic per profile, so the animation only changes when your contributions do.
 

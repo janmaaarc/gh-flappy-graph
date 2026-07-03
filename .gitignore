@@ -8,3 +8,4 @@ dist/
 !example.gif
 .pytest_cache/
 .impeccable/
+roadmap.md

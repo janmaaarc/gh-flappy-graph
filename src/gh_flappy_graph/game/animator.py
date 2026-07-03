@@ -26,7 +26,10 @@ def generate_frames(pipes: list[Pipe]) -> list[Frame]:
     index = 0
 
     while current[-1].x + constants.PIPE_WIDTH > 0:
-        current = [dataclasses.replace(p, x=p.x - constants.SCROLL_SPEED) for p in current]
+        ahead = next((p for p in current if p.x + constants.PIPE_WIDTH >= constants.BIRD_X), None)
+        # busier weeks scroll faster: your grind is the difficulty curve
+        speed = constants.SCROLL_SPEED * (1 + constants.SPEED_RAMP * (ahead.intensity if ahead else 0))
+        current = [dataclasses.replace(p, x=p.x - speed) for p in current]
 
         upcoming = next(
             (p for p in current if p.x + constants.PIPE_WIDTH >= constants.BIRD_X),

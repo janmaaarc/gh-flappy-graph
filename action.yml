@@ -25,6 +25,14 @@ inputs:
     description: 'Bird theme (classic, red, blue, ghost)'
     required: false
     default: 'classic'
+  theme:
+    description: 'Canvas theme (dark, light)'
+    required: false
+    default: 'dark'
+  weeks:
+    description: 'Only render the last N weeks (default: full year)'
+    required: false
+    default: ''
   commit-message:
     description: 'Commit message for the GIF update'
     required: false
@@ -60,11 +68,15 @@ runs:
         INPUT_OUTPUT_PATH: ${{ inputs.output-path }}
         INPUT_FPS: ${{ inputs.fps }}
         INPUT_BIRD: ${{ inputs.bird }}
+        INPUT_THEME: ${{ inputs.theme }}
+        INPUT_WEEKS: ${{ inputs.weeks }}
       run: |
         gh-flappy-graph "$INPUT_USERNAME" \
           --output "$INPUT_OUTPUT_PATH" \
           --fps "$INPUT_FPS" \
-          --bird "$INPUT_BIRD"
+          --bird "$INPUT_BIRD" \
+          --theme "$INPUT_THEME" \
+          ${INPUT_WEEKS:+--weeks "$INPUT_WEEKS"}
         echo "output-file=$INPUT_OUTPUT_PATH" >> "$GITHUB_OUTPUT"
 
     - name: Commit and push
