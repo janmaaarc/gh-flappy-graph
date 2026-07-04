@@ -2,9 +2,9 @@
 
 Turn your GitHub contribution graph into a Flappy Bird animation.
 
-**Try it live with any username at [janmaaarc.dev/flappy](https://janmaaarc.dev/flappy)** — no install.
-
 Each week of contributions becomes a pipe. Busier weeks mean tighter gaps. The bird auto-flies through your entire year of coding.
+
+Try it live with any username at [janmaaarc.dev/flappy](https://janmaaarc.dev/flappy), no install.
 
 ![Example](example.gif?v=2)
 
